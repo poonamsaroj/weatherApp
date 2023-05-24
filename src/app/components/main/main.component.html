@@ -1,0 +1,59 @@
+<div class="container">
+    <!-- Search Field -->
+    <form class="search-form">
+        <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Choose a City</mat-label>
+            <input type="text" aria-label="city" matInput [formControl]="myControl" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    {{option}}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+    </form>
+
+    <!-- Current city information -->
+    <mat-card class="current-card">
+        <mat-card-header>
+            <mat-card-title>Ottawa</mat-card-title>
+            <mat-card-subtitle>16 degrees | Mostly Clear</mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
+
+
+    <mat-card class="current-card">
+        <mat-list>
+            <div mat-subheader>Upcoming Week Forcast</div>
+            <mat-list-item>
+                <div matListItemTitle>Today</div>
+                <div matListItemLine> 4 degrees </div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <div matListItemTitle>Tomorrow</div>
+                <div matListItemLine> 10 degrees</div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <div matListItemTitle>Friday</div>
+                <div matListItemLine> 10 degrees</div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <div matListItemTitle>Saturday</div>
+                <div matListItemLine> 10 degrees</div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <div matListItemTitle>Sunday</div>
+                <div matListItemLine> 10 degrees</div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <div matListItemTitle>Monday</div>
+                <div matListItemLine> 10 degrees</div>
+            </mat-list-item>
+        </mat-list></mat-card>
+
+</div>
