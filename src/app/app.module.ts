@@ -19,6 +19,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { NgFor, DatePipe } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
     MatIconModule,
     MatDividerModule,
     DatePipe,
-    MatGridListModule
+    MatGridListModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

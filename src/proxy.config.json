@@ -1,0 +1,11 @@
+{
+    "/api": {
+        "target": "https://api.open-meteo.com",
+        "secure": true,
+        "changeOrigin": true,
+        "pathRewrite": {
+            "^/api": ""
+        },
+        "debug": true
+    }
+}
