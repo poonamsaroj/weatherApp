@@ -1,23 +1,33 @@
 <div class="container">
-    <mat-grid-list [cols]="4" rowHeight="100px">
-        <mat-grid-tile [colspan]="3" [rowspan]="1">
+    <mat-grid-list [cols]="5" rowHeight="100px">
+        <mat-grid-tile [colspan]="3" [rowspan]="2">
             <mat-card>
-                
+
             </mat-card>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="1" [rowspan]="3">
-            <mat-card>
-                
+
+
+        <!-- Line chart for that day -->
+        <mat-grid-tile [colspan]="2" [rowspan]="3">
+            <mat-card style="width: 100%; height: 100%; box-sizing: border-box;">
+                <mat-card-header>
+                    <mat-card-title>Precipitation</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <canvas #myChart></canvas>
+                </mat-card-content>
             </mat-card>
         </mat-grid-tile>
+
+
         <mat-grid-tile [colspan]="1" [rowspan]="4">
             <mat-card>
-               
+
             </mat-card>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <mat-card>
-                
+
             </mat-card>
         </mat-grid-tile>
     </mat-grid-list>

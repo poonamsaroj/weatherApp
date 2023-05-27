@@ -20,6 +20,9 @@ import { NgFor, DatePipe } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { HttpClientModule } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { SharedService } from './shared.service';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -47,9 +50,10 @@ import { HttpClientModule } from '@angular/common/http';
     MatDividerModule,
     DatePipe,
     MatGridListModule,
-    HttpClientModule
+    HttpClientModule,
+    MatTableModule
   ],
-  providers: [],
+  providers: [provideAnimations(), SharedService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -4,9 +4,10 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { NgFor, AsyncPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-
-export interface Forecast {
-}
+import { ServicesService } from '../../services.service';
+import { mergeMap } from 'rxjs/operators';
+import { SharedService } from 'src/app/shared.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main',
@@ -16,96 +17,102 @@ export interface Forecast {
 })
 
 export class MainComponent implements OnInit {
-
-  cityName = new FormControl();   // Form control for picking city
-
-  cityOptions: string[] = ['Toronto', 'Ottawa', 'Vancover'];  // City lists
+  cityName = new FormControl();
+  cityOptions: string[];
   filteredOptions!: Observable<string[]>;
-  weatherData: any;  // Information about weather
+  temperature: number = 0;
+  currCityName: string;
+  weatherCondition: string;
+  weatherForecast = [];
 
-  weatherForcast: Forecast[] = [];
 
-  constructor(private http: HttpClient) {
-    this.cityName.setValue('Ottawa');   // Set the city value to the current location
+  constructor(private http: HttpClient, private myService: ServicesService, private sharedService: SharedService, private router: Router) {
+    this.cityOptions = sharedService.cityOptions;
   }
 
   ngOnInit() {
+    this.autoComplete();
+    this.getCurrentGeoLocation();
+  }
+
+  getCurrentGeoLocation() {
+    this.myService.getGeoLocationAndWeather().pipe(
+      mergeMap((innerObservable: Observable<any>) => innerObservable)
+    ).subscribe({
+      next: (resp) => {
+        console.log(resp);
+
+        // Setting city name
+        this.currCityName = resp[0].results[0]['components']['city'];
+
+        // Setting up weather condition
+        if (resp[1]['current_weather']['weathercode'] in this.sharedService.weatherCodes) {
+          this.weatherCondition = this.sharedService.weatherCodes[resp[1]['current_weather']['weathercode']];
+          this.temperature = resp[1]['current_weather']['temperature'];
+        }
+
+        // Setting up 7 days forecast
+        this.weatherForecast = resp[1]['daily']['time'].map((date, index) => {
+          if (resp[1]['current_weather']['weathercode'] in this.sharedService.weatherCodes) {
+            this.weatherCondition = this.sharedService.weatherCodes[resp[1]['current_weather']['weathercode']];
+          }
+          return { day: date, weatherCode: resp[1]['daily']['weathercode'][index] };
+        });
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    });
+  }
+
+
+  // If different city is being selected 
+  onCityChange(event) {
+    this.myService.getGeoLocationAndWeather(event.option.value).subscribe({
+      next: (resp) => {
+        // Setting city name
+        this.currCityName = event.option.value;
+        // Setting up weather condition
+        if (resp['current_weather']['weathercode'] in this.sharedService.weatherCodes) {
+          this.weatherCondition = this.sharedService.weatherCodes[resp['current_weather']['weathercode']];
+          this.temperature = resp['current_weather']['temperature'];
+        }
+
+        // Setting up 7 days forecast
+        this.weatherForecast = resp['daily']['time'].map((date, index) => {
+          if (resp['current_weather']['weathercode'] in this.sharedService.weatherCodes) {
+            this.weatherCondition = this.sharedService.weatherCodes[resp['current_weather']['weathercode']];
+          }
+          return { day: date, weatherCode: resp['daily']['weathercode'][index] };
+        });
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    });
+  }
+
+  callDetailsPage(event) {
+    debugger;
+    // Navigate to the target route with the data as query parameters
+    this.router.navigate(['/target-route'], { queryParams: { name: "poonam" } });
+  }
+
+
+
+
+  // OnChange feature on autocomplete() {
+  private autoComplete() {
     this.filteredOptions = this.cityName.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value || '')),
     );
-    // let city = this.cityName.value;
-    let city = 'New York';
-
-    // Make a request to the geocoding API
-    fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(city)}&key=54342efa60864d368d04db1762a29d7d`)
-      .then(response => response.json())
-      .then(data => {
-        // Extract the latitude and longitude from the API response
-        const { lat, lng } = data.results[0].geometry;
-
-        // Use the obtained coordinates as needed
-        console.log(`Latitude: ${lat}, Longitude: ${lng} `);
-      })
-      .catch(error => {
-        console.log('Error:', error);
-      });
   }
 
   // Autocompete logic
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.cityOptions.filter(option => option.toLowerCase().includes(filterValue));
-  }
-
-  // Current location - on load
-  public getCurrentLocation() {
-    const latitude = 45.3517673; // Example latitude
-    const longitude = -75.8115491; // Example longitude
-
-    // Make a request to the geocoding API
-    fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=54342efa60864d368d04db1762a29d7d`)
-      .then(response => response.json())
-      .then(data => {
-        debugger;
-        // Extract the city name from the API response
-        const cityName = data.results[0].components.city;
-
-        // Use the obtained city name as needed
-        console.log('City Name:', cityName);
-      })
-      .catch(error => {
-        console.log('Error:', error);
-      });
-  }
-
-  // Get long and lat by city name
-  public getGeoLocation() {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        console.log('Latitude:', latitude);
-        console.log('Longitude:', longitude);
-        this.http.get(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m&current_weather=true`).subscribe((data) => {
-
-        });
-      }, (error) => {
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            console.log('User denied the request for Geolocation.');
-            break;
-          case error.POSITION_UNAVAILABLE:
-            console.log('Location information is unavailable.');
-            break;
-          case error.TIMEOUT:
-            console.log('The request to get user location timed out.');
-            break;
-        }
-      });
-    } else {
-      console.log('Geolocation is not supported by this browser.');
-    }
   }
 
 }
