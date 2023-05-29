@@ -16,6 +16,7 @@
     </form>
 
 
+    <!-- Current weather -->
     <mat-card class="current-card weather-card">
         <mat-card-header>
             <mat-card-title>
@@ -35,6 +36,7 @@
         </mat-card-content>
     </mat-card>
 
+
     <!-- Weekly forcast  -->
     <mat-card class="current-card">
         <mat-list>
@@ -43,7 +45,7 @@
                 <div matListItemTitle>{{weather.day}}</div>
                 <div matListItemLine>{{weather.weatherCode}}</div>
                 <div matListItemLine>{{weather.temp}}</div>
-                <img width="30" src="{{ weatherCondition['img'] }}" />
+                <img width="30" src="{{ weather['weatherImg'] }}" />
                 <mat-divider></mat-divider>
             </mat-list-item>
         </mat-list>

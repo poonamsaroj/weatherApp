@@ -4,16 +4,12 @@
 
 .current-card {
     margin-bottom: 10px !important;
-    max-width: 400px;
+    max-width: 500px;
     margin: 0 auto;
 }
 
 .mat-card-header-text {
     margin: 0 auto !important;
-}
-
-.mat-toolbar-row {
-    background-color: cadetblue;
 }
 
 .text-image-container {
@@ -23,6 +19,9 @@
     width: 100%;
 }
 
+.mat-card-subtitle {
+    color: black;
+}
 
 .mat-list-item-content {
     cursor: pointer;

@@ -20,7 +20,7 @@ export class MainComponent implements OnInit {
   cityName = new FormControl();
   cityOptions: string[];
   filteredOptions!: Observable<string[]>;
-  temperature: number = 0;
+  temperature: number;
   currCityName: string;
   weatherCondition: {};
   weatherForecast = [];
@@ -56,6 +56,7 @@ export class MainComponent implements OnInit {
           this.temperature = resp[1]['current_weather']['temperature'];
         }
 
+        // Setting up weekly forecast
         this.weatherForecast = resp[1]['daily']['time'].map((date, index) => {
           let temp;
           const ind = resp[1]['hourly']['time'].findIndex(item => item === date + 'T00:00');
@@ -64,7 +65,7 @@ export class MainComponent implements OnInit {
           }
           return {
             day: date,
-            weatherCode: this.sharedService.weatherCodes[resp[1]['daily']['weathercode'][index]].name,
+            weatherCode: this.sharedService.weatherCodes[resp[1]['daily']['weathercode'][index]].shortName,
             weatherImg: this.sharedService.weatherCodes[resp[1]['daily']['weathercode'][index]].weatherImg,
             temp: temp
           };
@@ -86,18 +87,29 @@ export class MainComponent implements OnInit {
 
         // Setting city name
         this.currCityName = event.option.value;
+
         // Setting up weather condition
         if (resp['current_weather']['weathercode'] in this.sharedService.weatherCodes) {
-          this.weatherCondition = this.sharedService.weatherCodes[resp['current_weather']['weathercode']];
+          this.weatherCondition = {
+            'name': this.sharedService.weatherCodes[resp['current_weather']['weathercode']].name,
+            'img': this.sharedService.weatherCodes[resp['current_weather']['weathercode']].weatherImg
+          };
           this.temperature = resp['current_weather']['temperature'];
         }
 
-        // Setting up 7 days forecast
+        // Setting up weekly forecast
         this.weatherForecast = resp['daily']['time'].map((date, index) => {
-          if (resp['current_weather']['weathercode'] in this.sharedService.weatherCodes) {
-            this.weatherCondition = this.sharedService.weatherCodes[resp['current_weather']['weathercode']];
+          let temp;
+          const ind = resp['hourly']['time'].findIndex(item => item === date + 'T00:00');
+          if (ind !== -1) {
+            temp = resp['hourly']['apparent_temperature'][ind];
           }
-          return { day: date, weatherCode: resp['daily']['weathercode'][index] };
+          return {
+            day: date,
+            weatherCode: this.sharedService.weatherCodes[resp['daily']['weathercode'][index]].shortName,
+            weatherImg: this.sharedService.weatherCodes[resp['daily']['weathercode'][index]].weatherImg,
+            temp: temp
+          };
         });
       },
       error: (err) => {
@@ -129,7 +141,6 @@ export class MainComponent implements OnInit {
       }
       return null;
     }).filter(index => index !== null);
-    debugger;
     filteredIndex.forEach(filteredIndex => {
       filteredData.apparent_temperature.push(this.timelyForecast['apparent_temperature'][filteredIndex]);
       filteredData.precipitation.push(this.timelyForecast['precipitation'][filteredIndex]);
@@ -143,16 +154,9 @@ export class MainComponent implements OnInit {
       filteredData.soil_temperature_0cm.push(this.timelyForecast['soil_temperature_0cm'][filteredIndex]);
       filteredData.surface_pressure.push(this.timelyForecast['surface_pressure'][filteredIndex]);
     });
-    console.log(filteredData)
     this.sharedService.weatherForecasting = filteredData;
     this.router.navigate(['/detail']);
   }
-
-
-  fetchDataForDate(date, data) {
-
-  }
-
 
 
   // OnChange feature on autocomplete() {

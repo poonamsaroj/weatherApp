@@ -12,6 +12,8 @@ export class ServicesService {
   constructor(private http: HttpClient, private sharedServices: SharedService) { }
 
 
+  // API call to fetch the weather information
+  // @cityName = in case if user selects a city name
   getGeoLocationAndWeather(cityName = ''): Observable<any> {
     return new Observable<any>((observer) => {
       if (navigator.geolocation && cityName === '') {
@@ -33,9 +35,7 @@ export class ServicesService {
         const response$ = this.http.get(cityAPICall)
           .pipe(
             switchMap((resp: any) => {
-              // Extract the necessary data from the first API response
               const data = resp['results'][0]['geometry'];
-              // Use the extracted data to make the second API request
               const weatherAPICall = `https://api.open-meteo.com/v1/forecast?latitude=${data.lat}&longitude=${data.lng}&hourly=temperature_2m,${this.sharedServices.weatherConditions}&daily=weathercode&current_weather=true&timezone=GMT&forecast_days=7`;
               return this.http.get(weatherAPICall)
             })

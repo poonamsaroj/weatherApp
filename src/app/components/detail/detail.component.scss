@@ -1,21 +1,47 @@
-mat-grid-tile {
-  background: lightblue;
+.top-row .mat-card {
+  width: 300px;
+  color: white;
 }
 
-.demo-table {
+.top-row .mat-card-header-text {
   width: 100%;
+  text-align: center;
 }
 
-.mat-mdc-row .mat-mdc-cell {
-  border-bottom: 1px solid transparent;
-  border-top: 1px solid transparent;
-  cursor: pointer;
-}
-
-.mat-mdc-row:hover .mat-mdc-cell {
-  border-color: currentColor;
-}
-
-.demo-row-is-clicked {
+.top-row .mat-card-subtitle {
+  color: white;
   font-weight: bold;
+  font-size: 1.5em;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-row .precipitation {
+  background: linear-gradient(to right, #5DA9FF, #B7D7FF);
+}
+
+.top-row .cloudcover {
+  background: linear-gradient(to right, #3FDBBC, #76e9d2);
+}
+
+.top-row .pressure {
+  background: linear-gradient(to right, #FFC167, #fac474);
+}
+
+.top-row .humidity {
+  background: linear-gradient(to right, #FF6B84, #f67b90);
+}
+
+.charts {
+  display: flex;
+  margin: 1em 0;
+  justify-content: space-between;
+}
+
+.charts mat-card {
+  width: 45%;
 }

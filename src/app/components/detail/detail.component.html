@@ -1,34 +1,36 @@
 <div class="container">
-    <mat-grid-list [cols]="5" rowHeight="100px">
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <mat-card>
-
-            </mat-card>
-        </mat-grid-tile>
-
-
-        <!-- Line chart for that day -->
-        <mat-grid-tile [colspan]="2" [rowspan]="3">
-            <mat-card style="width: 100%; height: 100%; box-sizing: border-box;">
-                <mat-card-header>
-                    <mat-card-title>Precipitation</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                    <canvas #myChart></canvas>
-                </mat-card-content>
-            </mat-card>
-        </mat-grid-tile>
-
-
-        <mat-grid-tile [colspan]="1" [rowspan]="4">
-            <mat-card>
-
-            </mat-card>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="1" [rowspan]="1">
-            <mat-card>
-
-            </mat-card>
-        </mat-grid-tile>
-    </mat-grid-list>
+    <div class="top-row">
+        <mat-card class="precipitation">
+            <mat-card-header>
+                <mat-card-title>Precipitation</mat-card-title>
+                <mat-card-subtitle>{{precipitation}}</mat-card-subtitle>
+            </mat-card-header>
+        </mat-card>
+        <mat-card class="cloudcover">
+            <mat-card-header>
+                <mat-card-title>Cloud Cover</mat-card-title>
+                <mat-card-subtitle>{{cloudcover}}</mat-card-subtitle>
+            </mat-card-header>
+        </mat-card>
+        <mat-card class="pressure">
+            <mat-card-header>
+                <mat-card-title>Pressure</mat-card-title>
+                <mat-card-subtitle>{{pressure}}</mat-card-subtitle>
+            </mat-card-header>
+        </mat-card>
+        <mat-card class="humidity">
+            <mat-card-header>
+                <mat-card-title>Humidity</mat-card-title>
+                <mat-card-subtitle>{{humidity}}</mat-card-subtitle>
+            </mat-card-header>
+        </mat-card>
+    </div>
+    <div class="charts">
+        <mat-card>
+            <canvas id="lineChart"></canvas>
+        </mat-card>
+        <mat-card>
+            <canvas id="barChart"></canvas>
+        </mat-card>
+    </div>
 </div>
