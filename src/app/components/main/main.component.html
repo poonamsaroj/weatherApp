@@ -4,7 +4,8 @@
     <form class="search-form">
         <mat-form-field class="half-width" appearance="outline">
             <mat-label>Choose a City</mat-label>
-            <input type="text" aria-label="city" matInput [formControl]="cityName" [matAutocomplete]="auto">
+            <input type="text" class="search-input" aria-label="city" matInput [formControl]="cityName"
+                [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCityChange($event)">
                 <mat-option *ngFor="let cityOptions of filteredOptions | async" [value]="cityOptions">
                     {{cityOptions}}
@@ -14,21 +15,35 @@
         </mat-form-field>
     </form>
 
-    <!-- Current city information -->
-    <mat-card class="current-card">
+
+    <mat-card class="current-card weather-card">
         <mat-card-header>
-            <mat-card-title>{{currCityName}}</mat-card-title>
-            <mat-card-subtitle>{{temperature}} °C | {{ weatherCondition }} </mat-card-subtitle>
+            <mat-card-title>
+                <div class="text-image-container">
+                    <span class="text">
+                        {{ currCityName | uppercase }}
+                    </span>
+                    <img width="30" src="{{ weatherCondition['img'] }}" />
+                </div>
+            </mat-card-title>
+            <mat-card-subtitle>
+                {{ temperature }}°C
+            </mat-card-subtitle>
         </mat-card-header>
+        <mat-card-content>
+            <p>{{ weatherCondition['name'] }}</p>
+        </mat-card-content>
     </mat-card>
 
     <!-- Weekly forcast  -->
     <mat-card class="current-card">
         <mat-list>
-            <div mat-subheader>Upcoming Forcast</div>
+            <div mat-subheader>7-DAY FORECAST</div>
             <mat-list-item *ngFor="let weather of weatherForecast" (click)="callDetailsPage(weather.day)">
                 <div matListItemTitle>{{weather.day}}</div>
                 <div matListItemLine>{{weather.weatherCode}}</div>
+                <div matListItemLine>{{weather.temp}}</div>
+                <img width="30" src="{{ weatherCondition['img'] }}" />
                 <mat-divider></mat-divider>
             </mat-list-item>
         </mat-list>

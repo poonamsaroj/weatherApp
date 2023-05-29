@@ -12,8 +12,20 @@
     margin: 0 auto !important;
 }
 
-// .background-img {
-//     background-image: url('../../../assets/img/night.jpg');
-//     background-repeat: no-repeat;
-//     background-size: cover;
-// }
+.mat-toolbar-row {
+    background-color: cadetblue;
+}
+
+.text-image-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+
+.mat-list-item-content {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { filter, map, startWith } from 'rxjs/operators';
 import { NgFor, AsyncPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ServicesService } from '../../services.service';
@@ -22,8 +22,9 @@ export class MainComponent implements OnInit {
   filteredOptions!: Observable<string[]>;
   temperature: number = 0;
   currCityName: string;
-  weatherCondition: string;
+  weatherCondition: {};
   weatherForecast = [];
+  timelyForecast = [];
 
 
   constructor(private http: HttpClient, private myService: ServicesService, private sharedService: SharedService, private router: Router) {
@@ -40,23 +41,33 @@ export class MainComponent implements OnInit {
       mergeMap((innerObservable: Observable<any>) => innerObservable)
     ).subscribe({
       next: (resp) => {
-        console.log(resp);
+        // Saving forecast
+        this.timelyForecast = resp[1]['hourly'];
 
         // Setting city name
         this.currCityName = resp[0].results[0]['components']['city'];
 
         // Setting up weather condition
         if (resp[1]['current_weather']['weathercode'] in this.sharedService.weatherCodes) {
-          this.weatherCondition = this.sharedService.weatherCodes[resp[1]['current_weather']['weathercode']];
+          this.weatherCondition = {
+            'name': this.sharedService.weatherCodes[resp[1]['current_weather']['weathercode']].name,
+            'img': this.sharedService.weatherCodes[resp[1]['current_weather']['weathercode']].weatherImg
+          };
           this.temperature = resp[1]['current_weather']['temperature'];
         }
 
-        // Setting up 7 days forecast
         this.weatherForecast = resp[1]['daily']['time'].map((date, index) => {
-          if (resp[1]['current_weather']['weathercode'] in this.sharedService.weatherCodes) {
-            this.weatherCondition = this.sharedService.weatherCodes[resp[1]['current_weather']['weathercode']];
+          let temp;
+          const ind = resp[1]['hourly']['time'].findIndex(item => item === date + 'T00:00');
+          if (ind !== -1) {
+            temp = resp[1]['hourly']['apparent_temperature'][ind];
           }
-          return { day: date, weatherCode: resp[1]['daily']['weathercode'][index] };
+          return {
+            day: date,
+            weatherCode: this.sharedService.weatherCodes[resp[1]['daily']['weathercode'][index]].name,
+            weatherImg: this.sharedService.weatherCodes[resp[1]['daily']['weathercode'][index]].weatherImg,
+            temp: temp
+          };
         });
       },
       error: (err) => {
@@ -70,6 +81,9 @@ export class MainComponent implements OnInit {
   onCityChange(event) {
     this.myService.getGeoLocationAndWeather(event.option.value).subscribe({
       next: (resp) => {
+        // Saving forecast
+        this.timelyForecast = resp['hourly'];
+
         // Setting city name
         this.currCityName = event.option.value;
         // Setting up weather condition
@@ -93,11 +107,51 @@ export class MainComponent implements OnInit {
   }
 
   callDetailsPage(event) {
+    let desired_date = event;
+    const filteredData = {
+      apparent_temperature: [],
+      precipitation: [],
+      visibility: [],
+      weathercode: [],
+      windspeed_10m: [],
+      relativehumidity_2m: [],
+      dewpoint_2m: [],
+      cloudcover: [],
+      pressure_msl: [],
+      soil_temperature_0cm: [],
+      surface_pressure: []
+    };
+
+    const filteredIndex = this.timelyForecast['time'].map((date, index) => {
+      let trunc_date = date.split("T")[0];
+      if (trunc_date.startsWith(desired_date)) {
+        return index;
+      }
+      return null;
+    }).filter(index => index !== null);
     debugger;
-    // Navigate to the target route with the data as query parameters
-    this.router.navigate(['/target-route'], { queryParams: { name: "poonam" } });
+    filteredIndex.forEach(filteredIndex => {
+      filteredData.apparent_temperature.push(this.timelyForecast['apparent_temperature'][filteredIndex]);
+      filteredData.precipitation.push(this.timelyForecast['precipitation'][filteredIndex]);
+      filteredData.visibility.push(this.timelyForecast['visibility'][filteredIndex]);
+      filteredData.weathercode.push(this.timelyForecast['weathercode'][filteredIndex]);
+      filteredData.windspeed_10m.push(this.timelyForecast['windspeed_10m'][filteredIndex]);
+      filteredData.relativehumidity_2m.push(this.timelyForecast['relativehumidity_2m'][filteredIndex]);
+      filteredData.dewpoint_2m.push(this.timelyForecast['dewpoint_2m'][filteredIndex]);
+      filteredData.cloudcover.push(this.timelyForecast['cloudcover'][filteredIndex]);
+      filteredData.pressure_msl.push(this.timelyForecast['pressure_msl'][filteredIndex]);
+      filteredData.soil_temperature_0cm.push(this.timelyForecast['soil_temperature_0cm'][filteredIndex]);
+      filteredData.surface_pressure.push(this.timelyForecast['surface_pressure'][filteredIndex]);
+    });
+    console.log(filteredData)
+    this.sharedService.weatherForecasting = filteredData;
+    this.router.navigate(['/detail']);
   }
 
+
+  fetchDataForDate(date, data) {
+
+  }
 
 
 

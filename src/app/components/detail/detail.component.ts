@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { ActivatedRoute } from '@angular/router';
+import { SharedService } from 'src/app/shared.service';
 
 export interface Tile {
   color: string;
@@ -47,27 +48,12 @@ export class DetailComponent implements OnInit, AfterViewInit {
     { text: 'Four', cols: 2, rows: 1, color: '#DDBDF1' },
   ];
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private sharedService: SharedService) {
 
   }
 
   ngOnInit(): void {
-    // Access query parameters using snapshot
-    const queryParams = this.route.snapshot.queryParams;
-
-    // Alternatively, subscribe to query parameter changes
-    this.route.queryParams.subscribe(params => {
-      const queryParams = params;
-      // Process the received data here
-
-      // index = data['time'].index(desired_date + 'T00:00')
-
-      // temperature_120m = data['temperature_120m'][index: index + 24]
-      // temperature_180m = data['temperature_180m'][index: index + 24]
-      // vapor_pressure_deficit = data['vapor_pressure_deficit'][index: index + 24]
-      // visibility = data['visibility'][index: index + 24]
-      // weathercode = data['weathercode'][index: index + 24]
-    })
+    console.log(this.sharedService.weatherForecasting)
   }
 
   ngAfterViewInit() {
