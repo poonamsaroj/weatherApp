@@ -24,7 +24,7 @@
                     <span class="text">
                         {{ currCityName | uppercase }}
                     </span>
-                    <img width="30" src="{{ weatherCondition['img'] }}" />
+                    <img width="30" [src]="weatherCondition.img" />
                 </div>
             </mat-card-title>
             <mat-card-subtitle>
@@ -45,7 +45,7 @@
                 <div matListItemTitle>{{weather.day}}</div>
                 <div matListItemLine>{{weather.weatherCode}}</div>
                 <div matListItemLine>{{weather.temp}}</div>
-                <img width="30" src="{{ weather['weatherImg'] }}" />
+                <img width="30" [src]="weather.weatherImg" />
                 <mat-divider></mat-divider>
             </mat-list-item>
         </mat-list>

@@ -9,6 +9,11 @@ import { mergeMap } from 'rxjs/operators';
 import { SharedService } from 'src/app/shared.service';
 import { Router } from '@angular/router';
 
+interface WEATHERCONDITION {
+  name: string,
+  img: string
+}
+
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -17,12 +22,12 @@ import { Router } from '@angular/router';
 })
 
 export class MainComponent implements OnInit {
-  cityName = new FormControl();
-  cityOptions: string[];
-  filteredOptions!: Observable<string[]>;
-  temperature: number;
-  currCityName: string;
-  weatherCondition: {};
+  cityName = new FormControl(); // formcontrol for dropdown
+  cityOptions: string[];  // list of all cities
+  filteredOptions!: Observable<string[]>;  //
+  temperature: number;   // current temperature
+  currCityName: string;  // current city name
+  weatherCondition: WEATHERCONDITION = { name: '', img: '' };
   weatherForecast = [];
   timelyForecast = [];
 

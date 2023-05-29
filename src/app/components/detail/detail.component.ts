@@ -23,7 +23,6 @@ export class DetailComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     let weatherData = this.sharedService.weatherForecasting;
-    console.log(weatherData)
     this.createLineChart(weatherData['apparent_temperature']);
     this.createBarChart(weatherData['windspeed_10m']);
     this.precipitation = Number((weatherData['precipitation'].reduce((acc, curr) => acc + curr) / 24).toFixed(2));
